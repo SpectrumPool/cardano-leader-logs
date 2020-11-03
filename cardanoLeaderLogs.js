@@ -1,11 +1,7 @@
 const fs                      = require('fs')
 
-const { updateNodeStats }     = require('./nodeUtils.js')
-const { getFirstSlotOfEpoch } = require('./nodeUtils.js')
-
+const { updateNodeStats, getFirstSlotOfEpoch }     = require('./nodeUtils.js')
 const { callCLIForJSON }      = require('./cliUtils.js')
-const { execShellCommand }    = require('./cliUtils.js')
-
 const { getSigma }            = require('./ledgerUtils.js')
 
 console.log('             process args:', process.argv)
@@ -53,14 +49,12 @@ const genesisShelley          = JSON.parse(fs.readFileSync(params.genesisShelley
 const genesisByron            = JSON.parse(fs.readFileSync(params.genesisByron))
 
 async function loadLedgerState(magicString) {
-
-  await execShellCommand(cardanoCLI + ' shelley query ledger-state --cardano-mode ' + magicString + ' > ' + process.cwd() + '/ledgerstate.json ')
-  return JSON.parse(fs.readFileSync(process.cwd()+'/ledgerstate.json'))
+  return await callCLIForJSON(cardanoCLI + ' shelley query ledger-state --cardano-mode ' + magicString)
 }
 
 async function getLeaderLogs(firstSlotOfEpoch, poolVrfSkey, sigma, d, timeZone) {
   
-  let out = await execShellCommand('python3 ./isSlotLeader.py' +
+  let slots = await callCLIForJSON('python3 ./isSlotLeader.py' +
     ' --first-slot-of-epoch ' + firstSlotOfEpoch +
     ' --epoch-nonce '         + epochNonce +
     ' --vrf-skey '            + poolVrfSkey +
@@ -72,7 +66,6 @@ async function getLeaderLogs(firstSlotOfEpoch, poolVrfSkey, sigma, d, timeZone) 
     ' --time-zone '           + timeZone
   )
 
-  let slots = JSON.parse(out)
   let expectedBlocks = (sigma * 21600 * (1.00 - d))
 
   console.log('')

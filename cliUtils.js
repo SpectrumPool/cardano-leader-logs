@@ -20,6 +20,5 @@ function execShellCommand(cmd) {
 }
 
 module.exports = {
-  callCLIForJSON,
-  execShellCommand
+  callCLIForJSON
 }
