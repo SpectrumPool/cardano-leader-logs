@@ -52,7 +52,9 @@ function getFirstSlotOfEpoch(byron, shelley, absoluteSlot) {
 
   const shelleyTransitionEpoch = getShelleyTransitionEpoch(byron, shelley)
 
-  if(shelleyTransitionEpoch === -1) { return -1 }
+  if(shelleyTransitionEpoch === -1) { 
+    return -1 
+  }
 
   const byronEpochLength    = 10 * byron.protocolConsts.k
   const byronSlots          = byronEpochLength * shelleyTransitionEpoch
@@ -98,10 +100,15 @@ function updateNodeStats(nodeStatsURL) {
   })
 }
 
-module.exports = {
-  getEpoch,
-  getSlot,
-  getSlotInEpoch,
-  getFirstSlotOfEpoch,
-  updateNodeStats
+module.exports = function(nodeStatsURL){
+
+  await updateNodeStats(params.nodeStatsURL)
+
+  return {
+    getEpoch,
+    getSlot,
+    getSlotInEpoch,
+    getFirstSlotOfEpoch,
+    updateNodeStats
+  }
 }
